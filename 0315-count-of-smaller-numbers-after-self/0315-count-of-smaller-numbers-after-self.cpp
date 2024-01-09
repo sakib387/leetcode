@@ -1,7 +1,7 @@
 
 class Solution {
     vector<pair<int, int>> v;
-    int mp[100005]={0};
+   map<int,int>mp;
 
     void get(int l, int m, int r) {
          int rt = m + 1;
