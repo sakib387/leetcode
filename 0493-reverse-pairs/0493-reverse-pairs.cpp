@@ -1,76 +1,66 @@
-vector<int>v;
-void merge(int l,int m,int r){
-    int l1=m-l+1;
-    int r1=r-m;
-    int L[l1],R[r1];
-    for(int i=0;i<l1;i++)L[i]=v[l+i];
-    for(int i=0;i<r1;i++)R[i]=v[m+1+i];
-    int i=0,j=0,k=l;
-    while(i<l1&&j<r1){
-        if(L[i]<=R[j]){
-            v[k]=L[i];i++;
-        }
-        else{
-            v[k]=R[j];j++;
-        }
-        k++;
-    }
-      while(i<l1){
-        
-            v[k]=L[i];i++;
-      
-        k++;
-    }
-      while(j<r1){
-        
-            v[k]=R[j];j++;
-      
-        k++;
-    }
+
+class Solution {
     
-    
-}
-int get(int l,int m,int r){
-    int j=m+1;
-    int cn=0;
-    for(int i=l;i<=m;i++){
-        long long b=v[j];
-        
-        while(j<=r){
-            long long c=v[j];
-            c*=2;
-            if(v[i]<=c)break;
-            j++;
+ void merge(vector<int> &arr, int low, int mid, int high) {
+    vector<int> temp;
+    int left = low;     
+    int right = mid + 1;  
+
+    while (left <= mid && right <= high) {
+        if (arr[left] <= arr[right]) {
+            temp.push_back(arr[left]);
+            left++;
         }
-        cn+=j-(m+1);
+        else {
+            temp.push_back(arr[right]);
+            right++;
+        }
     }
-    cout<<cn<<endl;
-    return cn;
+
+    while (left <= mid) {
+        temp.push_back(arr[left]);
+        left++;
+    }
+    while (right <= high) {
+        temp.push_back(arr[right]);
+        right++;
+    }
+    for (int i = low; i <= high; i++) {
+        arr[i] = temp[i - low];
+    }
 }
-int mergesort(int l,int r){
-    int cnt=0;
-  if(l<r){
-      int m=(l+r)/2;
-      cnt+=mergesort(l,m);
-      cnt+=mergesort(m+1,r);
-      cnt+=get(l,m,r);
-      merge(l,m,r);
-  }  
+
+int countPairs(vector<int> &arr, int low, int mid, int high) {
+    int right = mid + 1;
+    int cnt = 0;
+    for (int i = low; i <= mid; i++) {
+        while (right <= high && arr[i] >(long long) 2 * (long long)arr[right]) right++;
+        cnt += (right - (mid + 1));
+    }
     return cnt;
 }
 
-class Solution {
- 
- 
+int mergeSort(vector<int> &arr, int low, int high) {
+    int cnt = 0;
+    if (low >= high) return cnt;
+    int mid = (low + high) / 2 ;
+    cnt += mergeSort(arr, low, mid); 
+    cnt += mergeSort(arr, mid + 1, high); 
+    cnt += countPairs(arr, low, mid, high); 
+    merge(arr, low, mid, high); 
+    return cnt;
+}
+
+int team(vector <int> & skill, int n)
+{
+    return mergeSort(skill, 0, n - 1);
+}
+
 public:
     int reversePairs(vector<int>& nums) {
         
-         v=nums;
-        int ans= mergesort(0,v.size()-1);
-        for(int i=0;i<v.size();i++){
-            cout<<v[i]<<" ";
-        }
-        return ans;
-    
+      
+       
+        return team(nums,nums.size());
     }
 };
